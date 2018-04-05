@@ -5,7 +5,6 @@ require 'yaml'
 class TwitterApi
 	attr_reader :client
 
-	desc "collect", "Collect and store tweets using Twitter Search TwitterApi"
 	def initialize
 		keys = YAML.load_file('application.yml')
 
