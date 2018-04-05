@@ -31,4 +31,5 @@ class TwitterApi
 		client.search("#{keyword} -rt", result_type: "recent").take(numTweeters).collect do |tweet|
 			arr.push(tweet.user.screen_name)
 		end
-	
+	end
+end	
