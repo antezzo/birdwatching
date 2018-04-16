@@ -36,6 +36,11 @@ puts data[0]
 # and each data-point-hash will have an additional key-value pair (ex. {:label => 3})
 labeled_data = kcl.get_clusters(data, k)
 
+#NOTE: it looks like 'kcl.get_clusters()' changes the original array that is passed in,
+# rather than returning a new copy.  If we want to change that, it is an easy fix, but I
+# don't know why we would want the unlabeled and labeled data sets. Basically it means
+# that creating the 'labeled_data' variable like I do here is a little redundant, but is
+# is easier to read so maybe it isn't. 
 
 print "After: "
 puts labeled_data[0]
