@@ -1,5 +1,4 @@
-require 'pry' # just for debuggins
-require 'matrix' # so that I could get some column_vectors
+#require 'pry' # just for debuggins
 include Math # for square root and exponentials
 
 # 'pry' is a debugging tool, and should be the only gem you have to install
