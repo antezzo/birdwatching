@@ -1,28 +1,13 @@
+require 'pry' # just for debuggins
+require 'matrix' # so that I could get some column_vectors
+include Math # for square root and exponentials
 
-
-require 'ffi'
-require 'pry'
-require 'matrix'
-include Math
-
-module C_lib
-  extend FFI::Library
-
-  ffi_lib 'c'
-  ffi_lib './k_means.so'
-
-  attach_function :calculate_clusters, [ :pointer, :uint, :int, :int], :pointer
-end
+# 'pry' is a debugging tool, and should be the only gem you have to install
 
 class KClusters
-
-  def initialize
-    #puts "made it!"
-  end
-
   # k-means in ruby
   #
-  # Returns the dataset with the corresponding label added to each entry
+  # Returns the dataset with the corresponding label added to each data-point-hash
   # as a number from 1-k
   # ex: data[0] = {:x => 5, :y => 10} becomes
   #     data[0] = {:x => 5, :y => 10, :label => 4}
@@ -36,11 +21,19 @@ class KClusters
     for i in 0...(data.length)
       flat_data[i] = data[i].values.drop(1)
     end
-    data_mat = Matrix[*flat_data] # is this really necessary??
 
-    # matrix of mins and maxes for a given feature (by index)
+    #print flat_data
+
+    features = Array.new(num_features) {Array.new} # an array of features
+
+    flat_data.each { |feat_list|
+        for i in 0...num_features
+          features[i].push(feat_list[i])
+        end
+    }
+
+    # aray of mins and maxe pairs for a given feature (by index)
     min_max = Array.new
-    features = data_mat.column_vectors
     for i in 0...num_features
       min_max[i] = [features[i].min, features[i].max]
     end
@@ -51,6 +44,7 @@ class KClusters
       centroids[i] = random_centroid(min_max)
     end
 
+    # once we enter the loop this will be where we store the old centroid coordinates
     oldCentroids = Array.new(k) {Array.new(num_features)}
 
     while (not settled(oldCentroids, centroids))
@@ -75,6 +69,7 @@ class KClusters
     return centroid
   end
 
+  # returns true if oldCentroids == centroids
   def settled(oldCentroids, centroids)
     return (oldCentroids - centroids).empty?
   end
@@ -135,37 +130,4 @@ class KClusters
 
     return sum_array.map! { |f| f / points.size}
   end
-
-  # Returns the data array with corresponding labels appended to each point (implemented in C)
-  # Params:
-  # +data+:: the dictionary of features
-  # +k+:: the number of clusters to use
-  # Returns:
-  # an array of labels (ints from 1-k), whose indices correspond to the 'data' array's indices.
-  def get_clusters_c(data, k)
-
-    flattened_data = Array.new
-
-    data.each { |hash| # flattening the hash into an array of values
-      flat_hash = hash.values.drop(1) # remove the first element of each hash (which will be 'id')
-      flattened_data.push(flat_hash)
-    }
-
-    flattened_data.flatten! # should this be totally flat?
-
-    p_flat_data = FFI::MemoryPointer.new :double, flattened_data.size
-
-    p_flat_data.put_array_of_double 0, flattened_data
-
-    p_processed_array = C_lib.calculate_clusters(p_flat_data, data.length, (data[0].length - 1), k)
-
-    processed_array = p_processed_array.read_array_of_double(flattened_data.size)
-
-    puts processed_array
-  end
-
-  def calculate_clusters(data, num_points, num_features, k)
-      return C_lib.test(data, num_points, num_features, k)
-  end
-
 end
