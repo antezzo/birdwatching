@@ -17,26 +17,39 @@ file = "scraped_tweets.txt"
 #  line.split.map(&:to_i)
 #end
 
-username_list = ['thunder_thiighs', 'varshasinghmcx', 'warshipclass', 'JefeMulaa', 'Chiwoke_', 'AlexWr1ter']
+def collect_with_max_id(collection=[], max_id=nil, &block)
+  response = yield(max_id)
+  collection += response
+  response.empty? ? collection.flatten : collect_with_max_id(collection, response.last.id - 1, &block)
+end
 
-count = 15
-
-target = open(file, 'a+')
-arr = []
-
-username_list.each do |user|
-  puts "Now scraping tweets for #{user}"
-  client.user_timeline("#{user}", options= {count: "#{count}", include_rts: false, exclude_replies: true}).take(count).collect do |tweet|
-  arr.push(tweet.text)
+def client.get_all_tweets(user)
+  collect_with_max_id do |max_id|
+    options = {count: 10, include_rts: false}
+    options[:max_id] = max_id unless max_id.nil?
+    user_timeline(user, options)
   end
 end
 
-unique = arr.uniq
-unique.each do |uniquetweet|
-  target.write(uniquetweet)
-  target.write("\n")
+username_list = ['KimKardashian', 'BTS_twt', 'biticonjustine']
+
+
+#client.get_all_tweets("sam_lam18")
+
+#count = 10
+
+#target = open(file, 'a+')
+
+username_list.each do |user|
+  	puts "Now scraping tweets for #{user}"
+  	client.get_all_tweets(user)
 end
 
-target.close
+#target.close
 
 puts "All finished. The tweets have been saved in #{file}"
+
+
+
+
+
