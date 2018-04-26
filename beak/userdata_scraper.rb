@@ -2,23 +2,6 @@ require "rubygems"
 require "twitter"
 require "yaml"
 
-#class TwitterApi
-	#attr_reader :client
-
-	#def initialize
-keys = YAML.load_file('application.yml')
-
-
-	#end
-
-file = "tweets.txt"
-
-	#keywordList = ["retweet", "lol", "hola"]
-
-	#numTweeters = 10
-
-	
-
 class TwitterData
 	attr_reader :client
 
@@ -56,10 +39,7 @@ class TwitterData
 			end
 		end
 
-	
-		
 		return arr
-
 	end
 
 # 	Present information about a Twitter user
