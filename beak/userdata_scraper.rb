@@ -51,7 +51,8 @@ class TwitterData
 			followers	= user.followers_count.to_s
 			friends = user.friends_count.to_s
 			tweet_count = user.statuses_count.to_s
-			string_output = "#{username} #{followers} #{friends} #{tweet_count}\n"
+			fave_count = user.favorites_count.to_s
+			string_output = "#{username} #{followers} #{friends} #{tweet_count} #{fave_count}\n"
 		end
 		return string_output
 	end
@@ -60,16 +61,36 @@ class TwitterData
 	# writes them to a file called <username>_tweets.txt
 	# 'target' is the name of the directory (which has to already exist)
 	# into which you want to put the tweet txt files
+	# 		TWEET
+	# 		'retweet count' 'likes count'
 	def get_tweets(username, count, target)
 		filename = "#{target}/#{username}_tweets.txt"
 		target = open(filename, 'w')
+		user_retweet_count = 0
 		client.user_timeline(username, { :count => count, :tweet_mode => 'extended'}).each do |tweet|
-			target.write(tweet.attrs[:full_text] + "\n\t__END_TWEET__\n")
+			likes_count = tweet.favorite_count.to_s
+			rtcount = tweet.retweet_count.to_s
+			target.write(tweet.attrs[:full_text] + "\n\t__END_TWEET__\t#{rtcount} #{likes_count}\n")
+			#if tweet.include? "RT"
+			#	user_retweet_count += 1
+			#end
+			#target.write("\t#{rtcount} #{likes_count}\n")
 			#puts tweet.attrs[:full_text]
 			#puts "\n\t_END TWEET_\n"
 		end
+		#target.write("#{user_retweet_count}")
 		target.close
 	end
+
+	#def tweet_info(textfile, target)
+	#	to_scrape = textfile
+	#	RT_count = 0
+	#	to_scrape.each_line do |line|
+	#		if line[0,2].equals("RT")
+	#			RT_count += 1
+
+
+			
 
 
 end
@@ -79,5 +100,5 @@ end
 # makes new Twitter User object
 tweeter = TwitterData.new
 
-#tweeter.write_userstats_tofile("watermelon", 5)
+tweeter.write_userstats_tofile("watermelon", 5)
 tweeter.get_tweets("KimKardashian", 10, "tweets")
