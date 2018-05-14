@@ -1,15 +1,9 @@
 # 041718
 # preprocesses data
 
-require_relative 'belly/kclusters_implementation/class_kclusters'
-require_relative 'beak/userdata_scraper'
-require_relative 'beak/application.yml'
-
-# constants for running subprocess
-SCRAPER = File.expand_path(userdata_scraper)
-RUBY = File.join(Config::CONFIG['bindir'], Config::CONFIG['ruby_install_name'])
-
-$stdout.sync = true
+require 'belly/kclusters_implementation/class_kclusters'
+require 'beak/twitter_scraper'
+require 'beak/application.yml'
 
 # INIT COUNTS
 tweet_num = 0 # total number of tweets
@@ -35,12 +29,15 @@ end
 
 
 if $PROGRAM_NAME == __FILE__
+    # takes input of number of clusters and keyword 
+    # sends both to scraper 
+
     
     kcl = KClusters.new
     data = Array.new
 
     # run scraper
-    `ruby -r#{SCRAPER}`
+    #`ruby `
 
     file = File.open("beak/users_data.txt", "r")
     while !file.eof?
@@ -57,12 +54,12 @@ if $PROGRAM_NAME == __FILE__
 	    tarr = tweet.split(' ')
 
 	    tweet_num += 1
-	    word_num = arr.count
+	    word_num = tarr.count
 	    swear_num = 0
     
 	    count_avg = avg(count_avg, tweet_num, word_num)
     
-	    arr.each do |w|
+	    tarr.each do |w|
 		if is_swear(w)
 		    swear_num += 1
 		end
