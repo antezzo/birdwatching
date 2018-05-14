@@ -1,6 +1,7 @@
 require "rubygems"
 require "twitter"
 require "yaml"
+#require "fileutils"
 
 class TwitterData
 	attr_reader :client
@@ -17,7 +18,7 @@ class TwitterData
 	end
 
 	# given keyword, generate n number of users and write data about the users to the file "users_data.txt"
-	# #username #followers #friends #tweet_count
+	# #username #followers #friends #tweet_count #fave_count
 	def write_userstats_tofile(keyword, n)
 		#key = gets
 		file = "users_data.txt"
@@ -65,6 +66,8 @@ class TwitterData
 	# 		TWEET
 	# 		'retweet count' 'likes count'
 	def get_tweets(username, count, target)
+		#target_dir = '/#{target}/*'
+		#FileUtils.rm_r Dir.glob('#{target_dir}')
 		filename = "#{target}/#{username}_tweets.txt"
 		target = open(filename, 'w')
 		user_retweet_count = 0
@@ -102,5 +105,6 @@ end
 tweeter = TwitterData.new
 
 # Test runs
-tweeter.write_userstats_tofile("watermelon", 5)
-tweeter.get_tweets("KimKardashian", 10, "tweets")
+#File.delete('/beak/tweets/KimKardashian.txt')
+#tweeter.write_userstats_tofile("trump", 5)
+#tweeter.get_tweets("KimKardashian", 10, "tweets")
