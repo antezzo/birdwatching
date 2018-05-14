@@ -40,7 +40,7 @@ labeled_data = kcl.get_clusters(data, k)
 # rather than returning a new copy.  If we want to change that, it is an easy fix, but I
 # don't know why we would want the unlabeled and labeled data sets. Basically it means
 # that creating the 'labeled_data' variable like I do here is a little redundant, but is
-# is easier to read so maybe it isn't. 
+# is easier to read so maybe it isn't.
 
 print "After: "
 puts labeled_data[0]
