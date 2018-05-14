@@ -2,8 +2,6 @@
 # preprocesses data
 
 require_relative 'belly/kclusters_implementation/class_kclusters'
-<<<<<<< HEAD
-=======
 require_relative 'beak/userdata_scraper'
 require_relative 'beak/application.yml'
 
@@ -12,7 +10,7 @@ SCRAPER = File.expand_path(userdata_scraper)
 RUBY = File.join(Config::CONFIG['bindir'], Config::CONFIG['ruby_install_name'])
 
 $stdout.sync = true
->>>>>>> d8268720b63a8c1de5373b0df22bea675fba01da
+
 
 # INIT COUNTS
 tweet_num = 0 # total number of tweets
@@ -89,7 +87,7 @@ k = 5
 labeled_data = kcl.get_clusters(data, k)
 puts "The entire labeled data set...\n"
 puts labeled_data
-=======
+
 
 if $PROGRAM_NAME == __FILE__
     
@@ -149,4 +147,3 @@ if $PROGRAM_NAME == __FILE__
     puts "The entire labeled data set...\n"
     puts labeled_data
 end
->>>>>>> d8268720b63a8c1de5373b0df22bea675fba01da
