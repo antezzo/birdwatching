@@ -21,9 +21,11 @@ class KClusters
       flat_data[i] = data[i].values.drop(1)
     end
 
+    z_scored_flat_data = calculate_and_convert_to_z_scores(flat_data, num_features)
+
     features = Array.new(num_features) {Array.new} # an array of features
 
-    flat_data.each { |feat_list|
+    z_scored_flat_data.each { |feat_list|
         for i in 0...num_features
           features[i].push(feat_list[i])
         end
@@ -34,8 +36,6 @@ class KClusters
     for i in 0...num_features
       min_max[i] = [features[i].min, features[i].max]
     end
-
-    z_scored_flat_data = calculate_and_convert_to_z_scores(flat_data, min_max, num_features)
 
     # initialize centroids
     centroids = Array.new(k)
@@ -130,7 +130,7 @@ class KClusters
     return sum_array.map! { |f| f.to_f / points.size}
   end
 
-  def calculate_and_convert_to_z_scores(data, min_max, num_features)
+  def calculate_and_convert_to_z_scores(data, num_features)
     s_dev, means = calculate_standard_deviation(data, num_features)
 
     i = 0
