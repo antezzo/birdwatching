@@ -1,20 +1,20 @@
-@seleniumsnake 05/14/2018 17:41:13 |Kick the Tiny Ninja
+@seleniumsnake 05/14/2018 18:08:29 |Watch the Gigantic Ninja
 	__END_TWEET__	0 0
-@seleniumsnake 05/14/2018 17:39:29 |Kick the Tiny Watermelon
+@seleniumsnake 05/14/2018 18:07:52 |Kick the Tiny Watermelon
 	__END_TWEET__	0 0
-@seleniumsnake 05/14/2018 17:38:54 |Destroy the Gigantic Banana
+@seleniumsnake 05/14/2018 18:06:07 |Watch the Awesome Watermelon
 	__END_TWEET__	0 0
-@seleniumsnake 05/14/2018 17:37:14 |Take the Awesome Bicycle
+@seleniumsnake 05/14/2018 18:05:31 |Bin the Brown Textbook
 	__END_TWEET__	0 0
-@seleniumsnake 05/14/2018 17:36:41 |Take the Orange Textbook
+@seleniumsnake 05/14/2018 18:03:48 |Take the Tiny Monkey
 	__END_TWEET__	0 0
-@seleniumsnake 05/14/2018 17:34:58 |Watch the Orange Bicycle
+@seleniumsnake 05/14/2018 18:03:14 |Destroy the Tiny Banana
 	__END_TWEET__	0 0
-@seleniumsnake 05/14/2018 17:34:28 |Bin the Awesome Watermelon
+@seleniumsnake 05/14/2018 18:01:32 |Take the Awful Textbook
 	__END_TWEET__	0 0
-@seleniumsnake 05/14/2018 17:32:45 |Destroy the Awful Textbook
+@seleniumsnake 05/14/2018 18:00:53 |Take the Awful Textbook
 	__END_TWEET__	0 0
-@seleniumsnake 05/14/2018 17:32:14 |Kick the Tiny Bicycle
+@seleniumsnake 05/14/2018 17:59:13 |Watch the Awful Ninja
 	__END_TWEET__	0 0
-@seleniumsnake 05/14/2018 17:30:35 |Take the Gigantic Watermelon
+@seleniumsnake 05/14/2018 17:58:44 |Bin the Tiny Monkey
 	__END_TWEET__	0 0
