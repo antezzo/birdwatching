@@ -3,7 +3,6 @@
 
 require_relative '../belly/kclusters_implementation/class_kclusters'
 require_relative 'twitter_scraper'
-#require_relative 'beak/application.yml'
 
 class Gullet
 
@@ -23,7 +22,7 @@ class Gullet
   end
 
 
-  def process(keyword, k, num_users, should_scrape)# constants for running subprocess
+  def process_data(keyword, k, num_users, should_scrape)# constants for running subprocess
 
     scraper = TwitterData.new()
 
@@ -73,7 +72,6 @@ class Gullet
 
       	    swear_avg = avg(swear_avg, tweet_num, swear_num/word_num)
 
-
       	end
         tweets.close
 
@@ -83,7 +81,7 @@ class Gullet
       	    friends: arr[2].to_i,
       	    tweet_count: arr[3].to_i,
       	    count_avg: count_avg,
-      	    #swear_avg: swear_avg
+      	    swear_avg: swear_avg
       	}
       	data.push(data_point)
       end
@@ -103,5 +101,5 @@ class Gullet
   end
 end
 
-#gullet = Gullet.new()
-#print gullet.process("brain", 3, 5, false)
+gullet = Gullet.new()
+print gullet.process_data("brain", 3, 5, true)

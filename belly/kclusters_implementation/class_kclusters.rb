@@ -55,6 +55,13 @@ class KClusters
     end
 
     for i in 0...data.length
+      j = 0
+      data[i].keys.each { |key|
+        if (key != :id)
+          data[i][key] = z_scored_flat_data[i][j]
+          j += 1
+        end
+      }
       data[i][:label] = labels[i]
     end
     return data
@@ -138,7 +145,11 @@ class KClusters
     data.each { |point|
       z_point = Array.new()
       point.each { |val|
+      if (s_dev[i] == 0)
+        val = (val.to_f - means[i])
+      else
         val = ((val.to_f - means[i]) / s_dev[i])
+      end
         z_point.push(val)
       }
       z_data.push(z_point)
@@ -165,7 +176,7 @@ class KClusters
       }
       mean = total.to_f / num.to_f
       means.push(mean)
-      # binding.pry
+
       differences = Array.new() # for each feature
       data.each { |el|
         differences.push((el[i]-mean)**2)
