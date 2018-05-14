@@ -1,4 +1,4 @@
-#require 'pry' # just for debuggins
+require 'pry-byebug' # just for debuggins
 include Math # for square root and exponentials
 
 # 'pry' is a debugging tool, and should be the only gem you have to install
@@ -21,8 +21,6 @@ class KClusters
       flat_data[i] = data[i].values.drop(1)
     end
 
-    #print flat_data
-
     features = Array.new(num_features) {Array.new} # an array of features
 
     flat_data.each { |feat_list|
@@ -31,11 +29,13 @@ class KClusters
         end
     }
 
-    # aray of mins and maxe pairs for a given feature (by index)
+    # array of min and max pairs for a given feature (by index)
     min_max = Array.new
     for i in 0...num_features
       min_max[i] = [features[i].min, features[i].max]
     end
+
+    z_scored_flat_data = calculate_and_convert_to_z_scores(flat_data, min_max, num_features)
 
     # initialize centroids
     centroids = Array.new(k)
@@ -49,9 +49,9 @@ class KClusters
     while (not settled(oldCentroids, centroids))
       oldCentroids = centroids
 
-      labels = get_labels(flat_data, centroids, k) # make sure these are right lol
+      labels = get_labels(z_scored_flat_data, centroids, k) # make sure these are right lol
 
-      centroids = calculate_new_centroids(flat_data, labels, k, min_max)
+      centroids = calculate_new_centroids(z_scored_flat_data, labels, k, min_max)
     end
 
     for i in 0...data.length
@@ -127,6 +127,64 @@ class KClusters
       end
     end
 
-    return sum_array.map! { |f| f / points.size}
+    return sum_array.map! { |f| f.to_f / points.size}
+  end
+
+  def calculate_and_convert_to_z_scores(data, min_max, num_features)
+    s_dev, means = calculate_standard_deviation(data, num_features)
+
+    i = 0
+    z_data = Array.new()
+    data.each { |point|
+      z_point = Array.new()
+      point.each { |val|
+        val = ((val.to_f - means[i]) / s_dev[i])
+        z_point.push(val)
+      }
+      z_data.push(z_point)
+      i += 1
+      if (i == num_features)
+        i = 0
+      end
+    }
+    return z_data
+  end
+
+  def calculate_standard_deviation(data, num_features)
+    s_deviation = Array.new()
+    total = 0
+    num = 0
+    means = Array.new() # always indexed by feature
+
+    all_differences = Array.new() # going to be the same size as data
+
+    for i in 0...num_features
+      data.each { |el|
+        total += el[i]
+        num += 1
+      }
+      mean = total.to_f / num.to_f
+      means.push(mean)
+      # binding.pry
+      differences = Array.new() # for each feature
+      data.each { |el|
+        differences.push((el[i]-mean)**2)
+      }
+      all_differences.push(differences)
+    end
+
+    all_differences.each { |el|
+      total = 0
+      num = 0
+      el.each { |val|
+        total += val
+        num += 1
+      }
+
+      mean = total.to_f / num.to_f
+      s_deviation.push(sqrt(mean)) # standard deviations indexed by feature number
+    }
+
+    return s_deviation, means
   end
 end
