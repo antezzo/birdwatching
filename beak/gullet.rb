@@ -42,7 +42,7 @@ class Gullet
     kcl = KClusters.new
     data = Array.new
 
-    #begin
+    begin
       file = File.open("users_data.txt", "r")
 
 
@@ -91,10 +91,9 @@ class Gullet
       puts data
 
       file.close
-    #rescue
-      # print stament?
-      #return 1 # something went wrong
-    #end
+    rescue
+      return 1 # something went wrong
+    end
 
     labeled_data = kcl.get_clusters(data, k)
     puts "The entire labeled data set...\n"
@@ -104,5 +103,5 @@ class Gullet
   end
 end
 
-gullet = Gullet.new()
-print gullet.process("brain", 3, 5, true)
+#gullet = Gullet.new()
+#print gullet.process("brain", 3, 5, false)
