@@ -19,7 +19,7 @@ class TwitterData
 	# given keyword, generate n number of users and write data about the users to the file "users_data.txt"
 	# #username #followers #friends #tweet_count
 	def write_userstats_tofile(keyword, n)
-
+		#key = gets
 		file = "users_data.txt"
 		target = open(file, 'w')
 		get_users([keyword], n).each do |username_str|
@@ -101,5 +101,6 @@ end
 # makes new Twitter User object
 tweeter = TwitterData.new
 
+# Test runs
 tweeter.write_userstats_tofile("watermelon", 5)
-#tweeter.get_tweets("KimKardashian", 10, "tweets")
+tweeter.get_tweets("KimKardashian", 10, "tweets")
