@@ -54,7 +54,7 @@ class Gullet
 
       	tweets = File.open("tweets/" + arr[0] + "_tweets.txt")
         all_tweets = tweets.read.split("__END_TWEET__")
-	
+
 	all_tweets.each do |tweet|
       	    tarr = tweet.split(' ') # This breaks on new lines in tweets
 

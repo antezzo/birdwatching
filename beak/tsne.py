@@ -188,20 +188,22 @@ if __name__ == "__main__":
 
     fig = pylab.figure()
 
-    feature_names = ["followers", "friends", ]
+    feature_names = ["followers", "friends", "tweet count", "word avg"]
 
     k = 1
     for i in range(0, X.shape[1]):
-        j = 0
+        j = 1
         while (i + j < X.shape[1]):
-            graph = fig.add_subplot(3, 3, k)
+            graph = fig.add_subplot(3, X.shape[1], k)
+            graph.set_title("{0} vs {1}".format(feature_names[i], feature_names[i+j]))
             graph.scatter(X[...,i], X[...,i+j], 20, labels)
             j += 1
             k += 1
 
-    final = fig.add_subplot(3, 2, 5)
+    final = fig.add_subplot(2, 2, 3)
     final.scatter(Y[:, 0], Y[:, 1], 20, labels)
     #pylab.scatter(Y[:, 0], Y[:, 1], 20, labels)
+    final.set_title("reduced dimensionality")
     pylab.show()
     pylab.savefig("../feathers/graph_temp/graph_temp.png")
     print("DING DONG! All done")

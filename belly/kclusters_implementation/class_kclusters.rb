@@ -37,6 +37,23 @@ class KClusters
       min_max[i] = [features[i].min, features[i].max]
     end
 
+    z_transposed = Array.new()
+    z_scored_flat_data.each { |feature_list|
+      point = Array.new()
+      j = 0
+      feature_list.each { |value|
+        point.push(value - (min_max[j][0])) # because the min will always be negative or 0
+        j += 1
+      }
+      z_transposed.push(point)
+    }
+
+    for m in 0...num_features # shifting min's and maxes to match transposition
+      min = min_max[m][0]
+      min_max[m][0] -= min
+      min_max[m][1] -= min
+    end
+
     # initialize centroids
     centroids = Array.new(k)
     for i in 0...k
@@ -49,16 +66,16 @@ class KClusters
     while (not settled(oldCentroids, centroids))
       oldCentroids = centroids
 
-      labels = get_labels(z_scored_flat_data, centroids, k) # make sure these are right lol
+      labels = get_labels(z_transposed, centroids, k) # make sure these are right lol
 
-      centroids = calculate_new_centroids(z_scored_flat_data, labels, k, min_max)
+      centroids = calculate_new_centroids(z_transposed, labels, k, min_max)
     end
 
     for i in 0...data.length
       j = 0
       data[i].keys.each { |key|
         if (key != :id)
-          data[i][key] = z_scored_flat_data[i][j]
+          data[i][key] = z_transposed[i][j]
           j += 1
         end
       }
@@ -70,7 +87,11 @@ class KClusters
   def random_centroid(min_max)
     centroid = Array.new
     for i in 0...min_max.size
-      centroid.push(rand(min_max[i][0]...min_max[i][1]))
+      if (min_max[i][0] == min_max[i][1])
+        centroid.push(min_max[i][0])
+      else
+        centroid.push(rand(min_max[i][0]..min_max[i][1]))
+      end
     end
     return centroid
   end
@@ -140,36 +161,35 @@ class KClusters
   def calculate_and_convert_to_z_scores(data, num_features)
     s_dev, means = calculate_standard_deviation(data, num_features)
 
-    i = 0
     z_data = Array.new()
     data.each { |point|
       z_point = Array.new()
+      j = 0 # feature number
       point.each { |val|
-      if (s_dev[i] == 0)
-        val = (val.to_f - means[i])
-      else
-        val = ((val.to_f - means[i]) / s_dev[i])
-      end
+        if (s_dev[j] == 0)
+          val = (val.to_f - means[j]) # is this the best way to handle zeros?
+        else
+          val = ((val.to_f - means[j]) / s_dev[j])
+        end
         z_point.push(val)
+
+        j += 1
       }
       z_data.push(z_point)
-      i += 1
-      if (i == num_features)
-        i = 0
-      end
     }
     return z_data
   end
 
+  # returns the standard deviation for each feature, as well as the mean
   def calculate_standard_deviation(data, num_features)
     s_deviation = Array.new()
-    total = 0
-    num = 0
     means = Array.new() # always indexed by feature
 
     all_differences = Array.new() # going to be the same size as data
 
     for i in 0...num_features
+      num = 0
+      total = 0
       data.each { |el|
         total += el[i]
         num += 1
@@ -179,7 +199,7 @@ class KClusters
 
       differences = Array.new() # for each feature
       data.each { |el|
-        differences.push((el[i]-mean)**2)
+        differences.push((el[i] - mean)**2)
       }
       all_differences.push(differences)
     end

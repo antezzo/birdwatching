@@ -50,6 +50,25 @@ puts "The entire labeled data set...\n"
 puts labeled_data # so you can get an idea of the labeled data set
 
 
+features_file = File.open("test_features.txt", "w")
+labels_file = File.open("test_labels.txt", "w")
+
+labeled_data.each { |point_hash|
+  point_hash.values.slice(1...(point_hash.size - 1)).each { |value|
+    features_file.write(value)
+    features_file.write(" ")
+  }
+  features_file.write("\n")
+}
+
+labeled_data.each { |point_hash|
+  labels_file.write(point_hash[:label].to_f)
+  labels_file.write("\n")
+}
+
+features_file.close
+labels_file.close
+
 # this is an example of how to organize the labeled data by label
 # data_by_label[1] = < all the dph's with label 1 >
 data_by_label = Hash.new

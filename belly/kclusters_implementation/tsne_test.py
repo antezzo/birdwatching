@@ -186,5 +186,6 @@ if __name__ == "__main__":
     labels = np.loadtxt("test_labels.txt")
     Y = tsne(X, 2, 5, 5.0)
     pylab.scatter(Y[:, 0], Y[:, 1], 20, labels)
-    pylab.show()
+    #pylab.show()
     pylab.savefig("plot.png")
+    return 0
