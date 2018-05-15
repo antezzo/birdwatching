@@ -76,7 +76,6 @@ class Gullet
             word_num = 10
 
             # THIS IS BROKEN
-
       	    count_avg = avg(count_avg, tweet_num, word_num) # something is wrong here...
 
             swear_num = 0
@@ -118,8 +117,12 @@ class Gullet
     }
     #print flat_labeled_data
 
+    # Another dimensionality reduction technique
+
     # pca = PCA.new components: 2
     # reduced_data = pca.fit_transform flat_labeled_data
+    #
+    # print pca.explained_variance_ratio
     #
     # print reduced_data
 
@@ -146,5 +149,10 @@ class Gullet
   end
 end
 
+<<<<<<< HEAD
 gullet = Gullet.new()
 print gullet.process_data("kim", 4, 50, true)
+=======
+#gullet = Gullet.new()
+#print gullet.process_data("brain", 4, 500, true)
+>>>>>>> 1831ac4b6a08248b49b73ee7c3138b7e9a977657

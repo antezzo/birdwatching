@@ -184,7 +184,24 @@ if __name__ == "__main__":
     print("Running t-sne on tweeted data...")
     X = np.loadtxt("z_scored_features.txt")
     labels = np.loadtxt("z_scored_labels.txt")
-    Y = tsne(X, 2, 5, 5.0)
-    pylab.scatter(Y[:, 0], Y[:, 1], 20, labels)
+    Y = tsne(X, 2, 3, 5.0)
+
+    fig = pylab.figure()
+
+    feature_names = ["followers", "friends", ]
+
+    k = 1
+    for i in range(0, X.shape[1]):
+        j = 0
+        while (i + j < X.shape[1]):
+            graph = fig.add_subplot(3, 3, k)
+            graph.scatter(X[...,i], X[...,i+j], 20, labels)
+            j += 1
+            k += 1
+
+    final = fig.add_subplot(3, 2, 5)
+    final.scatter(Y[:, 0], Y[:, 1], 20, labels)
+    #pylab.scatter(Y[:, 0], Y[:, 1], 20, labels)
     pylab.show()
-    pylab.savefig("plot.png")
+    pylab.savefig("../feathers/graph_temp/graph_temp.png")
+    print("DING DONG! All done")
