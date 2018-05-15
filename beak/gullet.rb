@@ -47,28 +47,15 @@ class Gullet
     begin
       file = File.open("users_data.txt", "r")
 
-
       while !file.eof?
       	line = file.readline
       	next if line.strip.empty? == true
       	arr = line.split(' ')
 
       	tweets = File.open("tweets/" + arr[0] + "_tweets.txt")
-
-        # consider reading in the whole tweet into an array first
-        # and then looping that way
-
         all_tweets = tweets.read.split("__END_TWEET__")
 	
-	for tweet in @all_tweets
-=begin
-	while !tweets.eof?
-
-      	    tweet = tweets.readline
-
-      	    next if line.strip.empty? == true
-      	    next if line.strip == "__END_TWEET__"
-=end
+	all_tweets.each do |tweet|
       	    tarr = tweet.split(' ') # This breaks on new lines in tweets
 
       	    tweet_num += 1
@@ -95,8 +82,9 @@ class Gullet
       	    followers: arr[1].to_i,
       	    friends: arr[2].to_i,
       	    tweet_count: arr[3].to_i,
-      	    #count_avg: count_avg,
-      	    #swear_avg: swear_avg
+	    fav_count: arr[4].to_i,
+      	    count_avg: count_avg,
+      	    swear_avg: swear_avg
       	}
       	data.push(data_point)
       end
@@ -106,10 +94,10 @@ class Gullet
       return 1 # something went wrong
     end
 
-    #puts data
+    puts data
     labeled_data = kcl.get_clusters(data, k)
-    #puts "The entire labeled data set...\n"
-    #puts labeled_data
+    puts "The entire labeled data set...\n"
+    puts labeled_data
 
     flat_labeled_data = Array.new()
     labeled_data.each { |point_hash|
@@ -121,9 +109,7 @@ class Gullet
 
     # pca = PCA.new components: 2
     # reduced_data = pca.fit_transform flat_labeled_data
-    #
     # print pca.explained_variance_ratio
-    #
     # print reduced_data
 
     features_file = File.open("z_scored_features.txt", "w")
@@ -149,10 +135,5 @@ class Gullet
   end
 end
 
-<<<<<<< HEAD
 gullet = Gullet.new()
-print gullet.process_data("kim", 4, 50, true)
-=======
-#gullet = Gullet.new()
-#print gullet.process_data("brain", 4, 500, true)
->>>>>>> 1831ac4b6a08248b49b73ee7c3138b7e9a977657
+gullet.process_data("cheese", 4, 10, true)
