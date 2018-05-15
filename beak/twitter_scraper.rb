@@ -21,7 +21,7 @@ class TwitterData
 	# #username #followers #friends #tweet_count #fave_count
 	def write_userstats_tofile(keyword, n)
 	  #key = gets
-          cmd = "rm tweets/*.txt"
+          cmd = "rm -f tweets/*.txt"
           Process.spawn(cmd) # will this run the rest of the function
 		file = "users_data.txt"
 		target = open(file, 'w')

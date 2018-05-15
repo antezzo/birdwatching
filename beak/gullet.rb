@@ -3,8 +3,8 @@
 
 require_relative '../belly/kclusters_implementation/class_kclusters'
 require_relative 'twitter_scraper'
-require 'pca'
-require 'matplotlib'
+#require 'pca'
+#require 'matplotlib'
 
 class Gullet
 
@@ -72,7 +72,6 @@ class Gullet
 
 
             # THIS IS BROKEN
-
       	    count_avg = avg(count_avg, tweet_num, word_num) # something is wrong here...
 
             swear_num = 0
@@ -116,8 +115,12 @@ class Gullet
     }
     #print flat_labeled_data
 
+    # Another dimensionality reduction technique
+
     # pca = PCA.new components: 2
     # reduced_data = pca.fit_transform flat_labeled_data
+    #
+    # print pca.explained_variance_ratio
     #
     # print reduced_data
 
@@ -144,5 +147,5 @@ class Gullet
   end
 end
 
-gullet = Gullet.new()
-print gullet.process_data("brain", 4, 50, true)
+#gullet = Gullet.new()
+#print gullet.process_data("brain", 4, 500, true)
