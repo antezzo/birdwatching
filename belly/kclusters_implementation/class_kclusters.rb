@@ -1,4 +1,4 @@
-require 'pry-byebug' # just for debuggins
+#require 'pry-byebug' # just for debuggins
 include Math # for square root and exponentials
 
 # 'pry' is a debugging tool, and should be the only gem you have to install

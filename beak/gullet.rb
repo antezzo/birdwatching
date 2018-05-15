@@ -3,8 +3,8 @@
 
 require_relative '../belly/kclusters_implementation/class_kclusters'
 require_relative 'twitter_scraper'
-require 'pca'
-require 'matplotlib'
+#require 'pca'
+#require 'matplotlib'
 
 class Gullet
 
@@ -23,8 +23,8 @@ class Gullet
       end
   end
 
-
-  def process_data(keyword, k, num_users, should_scrape)# constants for running subprocess
+  # constants for running subprocess
+  def process_data(keyword, k, num_users, should_scrape)
 
     scraper = TwitterData.new()
 
@@ -58,18 +58,22 @@ class Gullet
         # consider reading in the whole tweet into an array first
         # and then looping that way
 
-        #all_tweets = tweets.read.split("__END_TWEET__")
+        all_tweets = tweets.read.split("__END_TWEET__")
+	
+	for tweet in @all_tweets
+=begin
+	while !tweets.eof?
 
-      	while !tweets.eof?
       	    tweet = tweets.readline
+
       	    next if line.strip.empty? == true
       	    next if line.strip == "__END_TWEET__"
+=end
       	    tarr = tweet.split(' ') # This breaks on new lines in tweets
 
       	    tweet_num += 1
       	    word_num = tarr.count
             word_num = 10
-
 
             # THIS IS BROKEN
 
@@ -98,14 +102,12 @@ class Gullet
       	data.push(data_point)
       end
 
-
       file.close
     rescue
       return 1 # something went wrong
     end
 
     #puts data
-
     labeled_data = kcl.get_clusters(data, k)
     #puts "The entire labeled data set...\n"
     #puts labeled_data
@@ -145,4 +147,4 @@ class Gullet
 end
 
 gullet = Gullet.new()
-print gullet.process_data("brain", 4, 50, true)
+print gullet.process_data("kim", 4, 50, true)
