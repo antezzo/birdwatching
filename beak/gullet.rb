@@ -3,6 +3,8 @@
 
 require_relative '../belly/kclusters_implementation/class_kclusters'
 require_relative 'twitter_scraper'
+require 'pca'
+require 'matplotlib'
 
 class Gullet
 
@@ -27,6 +29,7 @@ class Gullet
     scraper = TwitterData.new()
 
     if (should_scrape)
+      puts "Scraping..."
       scraper.write_userstats_tofile(keyword, num_users)
     end
 
@@ -51,19 +54,28 @@ class Gullet
       	arr = line.split(' ')
 
       	tweets = File.open("tweets/" + arr[0] + "_tweets.txt")
-      	#tweets = File.open("beak/tweets/KimKardashian_tweets.txt")
+
+        # consider reading in the whole tweet into an array first
+        # and then looping that way
+
+        #all_tweets = tweets.read.split("__END_TWEET__")
+
       	while !tweets.eof?
       	    tweet = tweets.readline
       	    next if line.strip.empty? == true
       	    next if line.strip == "__END_TWEET__"
-      	    tarr = tweet.split(' ')
+      	    tarr = tweet.split(' ') # This breaks on new lines in tweets
 
       	    tweet_num += 1
-      	    word_num = arr.count
-      	    swear_num = 0
+      	    word_num = tarr.count
+            word_num = 10
 
-      	    count_avg = avg(count_avg, tweet_num, word_num)
 
+            # THIS IS BROKEN
+
+      	    count_avg = avg(count_avg, tweet_num, word_num) # something is wrong here...
+
+            swear_num = 0
       	    tarr.each do |w|
           		if is_swear(w)
           		    swear_num += 1
@@ -80,26 +92,57 @@ class Gullet
       	    followers: arr[1].to_i,
       	    friends: arr[2].to_i,
       	    tweet_count: arr[3].to_i,
-      	    count_avg: count_avg,
-      	    swear_avg: swear_avg
+      	    #count_avg: count_avg,
+      	    #swear_avg: swear_avg
       	}
       	data.push(data_point)
       end
 
-      puts data
 
       file.close
     rescue
       return 1 # something went wrong
     end
 
-    labeled_data = kcl.get_clusters(data, k)
-    puts "The entire labeled data set...\n"
-    puts labeled_data
+    #puts data
 
-    return 0 # if it worked
+    labeled_data = kcl.get_clusters(data, k)
+    #puts "The entire labeled data set...\n"
+    #puts labeled_data
+
+    flat_labeled_data = Array.new()
+    labeled_data.each { |point_hash|
+      flat_labeled_data.push(point_hash.values.slice(1...point_hash.values.size-1))
+    }
+    #print flat_labeled_data
+
+    # pca = PCA.new components: 2
+    # reduced_data = pca.fit_transform flat_labeled_data
+    #
+    # print reduced_data
+
+    features_file = File.open("z_scored_features.txt", "w")
+    labels_file = File.open("z_scored_labels.txt", "w")
+
+    labeled_data.each { |point_hash|
+      point_hash.values.slice(1...(point_hash.size - 1)).each { |value|
+        features_file.write(value)
+        features_file.write(" ")
+      }
+      features_file.write("\n")
+    }
+
+    labeled_data.each { |point_hash|
+      labels_file.write(point_hash[:label].to_f)
+      labels_file.write("\n")
+    }
+
+    features_file.close
+    labels_file.close
+
+    return 0 # it worked!
   end
 end
 
 gullet = Gullet.new()
-print gullet.process_data("brain", 3, 5, true)
+print gullet.process_data("brain", 4, 50, true)
