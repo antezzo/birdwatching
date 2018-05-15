@@ -1,7 +1,6 @@
 require "rubygems"
 require "twitter"
 require "yaml"
-#require "fileutils"
 
 class TwitterData
 	attr_reader :client
@@ -76,7 +75,7 @@ class TwitterData
 		client.user_timeline(username, { :count => count, :tweet_mode => 'extended'}).each do |tweet|
 			likes_count = tweet.favorite_count.to_s
 			rtcount = tweet.retweet_count.to_s
-			target.write(tweet.attrs[:full_text] + "\n\t__END_TWEET__\t#{rtcount} #{likes_count}\n")
+			target.write(tweet.attrs[:full_text] + "\n\t#{rtcount} #{likes_count}\t + __END_TWEET__\n")
 			#if tweet.include? "RT"
 			#	user_retweet_count += 1
 			#end
@@ -109,4 +108,4 @@ tweeter = TwitterData.new
 # Test runs
 #File.delete('/beak/tweets/KimKardashian.txt')
 #tweeter.write_userstats_tofile("trump", 5)
-#tweeter.get_tweets("KimKardashian", 10, "tweets")
+tweeter.get_tweets("KimKardashian", 10, "tweets")
