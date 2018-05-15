@@ -1,12 +1,16 @@
 require 'tk'
 require 'tkextlib/tile'
+require 'RMagick'
+include Magick
 
 class GUIMain
-	def loadImage
+	def loadImage(runClusters,clusterNum,userNum)
 		$keyVar = TkVariable.new
 		$clusterNo = TkVariable.new
+		$userNo = TkVariable.new
 		$keyVar = @keywordMenu.get
-		$clusterNo = @clusterMenu.get
+		$clusterNo = clusterNum
+		$userNo = userNum
 		if ($keyVar == "c1") then
 				@image = TkPhotoImage.new(:file => "graph_temp/graph_temp1.gif")
 		elsif ($keyVar == "c2") then
@@ -23,76 +27,85 @@ class GUIMain
 
 	def clearImage
 		@label.image = @defaultImage
+		@kVal.text = nil
+		@cVal.text = nil
 	end
 
 	def initialize
 
 		root = TkRoot.new do  
 			title "Birdwatching"
-			geometry '800x600+50+50'
+			geometry '850x600+50+50'
 			resizable false, false
 		end
 
-		content = Tk::Tile::Frame.new(root) {width 600; height 800}
-		menuBarFrame = Tk::Tile::Frame.new(content) {width 800; height 50}
-		mainContentFrame = Tk::Tile::Frame.new(content) {width 600; height 450}
-		controlBarFrame = Tk::Tile::Frame.new(content) {width 800; height 100}
+		content = Tk::Tile::Frame.new(root) {width 850; height 600} # content container
+		menuBarFrame = Tk::Tile::Frame.new(content) {width 850; height 50} # menu bar container
+		mainContentFrame = Tk::Tile::Frame.new(content) {width 600; height 450} # main content container
+		controlBarFrame = Tk::Tile::Frame.new(content) {width 850; height 100} # 
 		sideBarFrame = Tk::Tile::Frame.new(content) {width 200; height 450}
 
-		runButton = Tk::Tile::Button.new(content) {text "Run"}
-		runButton.command{ loadImage }
-		cancelButton = Tk::Tile::Button.new(content) {text "Clear"}
+		heading = Tk::Tile::Label.new(content) {text "Birdwatching GUI"; font 'TkMenuFont'}
+
+		runButton = Tk::Tile::Button.new(sideBarFrame) {text "Run"}
+		runButton.command{ loadImage($scrapeVar,$clusterVar,$userVar) }
+		cancelButton = Tk::Tile::Button.new(sideBarFrame) {text "Clear"}
 		cancelButton.command{ clearImage }
 
-		$value = TkVariable.new( 5 )
-		oneCheck = Tk::Tile::CheckButton.new(content) {text "One"; variable $value; onvalue 1}
-		twoCheck = Tk::Tile::CheckButton.new(content) {text "Two"; variable $value; onvalue 2}
-		threeCheck = Tk::Tile::CheckButton.new(content) {text "Three"; variable $value; onvalue 3}
-		fourCheck = Tk::Tile::CheckButton.new(content) {text "Four"; variable $value; onvalue 4}
+		$scrapeVar = TkVariable.new( 1 )
+		doScrape = Tk::Tile::CheckButton.new(sideBarFrame) {text "Scrape new data?"; variable $scrapeVar; onvalue 1; offvalue 0}
 
 		kText = TkLabel.new(sideBarFrame) {text "Keyword:"; justify 'left'}
 		cText = TkLabel.new(sideBarFrame) {text "Number of clusters:"; justify 'left'}
+		uText = TkLabel.new(sideBarFrame) {text "Number of users:"; justify 'left'}
 
-		@keywordMenu = Tk::Tile::Combobox.new(sideBarFrame) {values [ 'c1', 'c2', 'c3']; state 'normal'; justify 'center'}
-		@kVal = Tk::Tile::Label.new(root)
-
-		@clusterMenu = Tk::Tile::Combobox.new(sideBarFrame) {values ['2','3','4','5','6','7','8','9','10','11','12','13','14','15']; state 'normal'; justify 'center'}
-		@cVal = Tk::Tile::Label.new(root)
+		$clusterVar = TkVariable.new(2)
+		$userVar = TkVariable.new(5)
+		@keywordMenu = Tk::Tile::Combobox.new(sideBarFrame) {values [ 'kim kardashian', 'c2', 'c3']; state 'normal'; justify 'center'}
+		@clusterMenu = Tk::Tile::Spinbox.new(sideBarFrame) {from 2; to 20; textvariable $clusterVar}
+		@userMenu = Tk::Tile::Spinbox.new(sideBarFrame) {from 5; to 200; textvariable $userVar}
+		
 
 		@label = Tk::Tile::Label.new(root)
 		@defaultImage = TkPhotoImage.new(:file => "graph_temp/default.gif")
 		@label.image = @defaultImage
 
-		logoLabel = TkLabel.new(root)
+		logoLabel = Tk::Tile::Label.new(root)
 		logo = TkPhotoImage.new(:file => "logo.gif")
 		logoLabel.image = logo
 
-		curK = TkLabel.new(root) {text "Current keyword:"; justify 'left'}
-		curC = TkLabel.new(root) {text "# of clusters:"; justify 'left'}
+		curK = Tk::Tile::Label.new(root) {text "Current keyword:"; compound 'left'}
+		@kVal = Tk::Tile::Label.new(root) {compound 'left'}
+		curC = Tk::Tile::Label.new(root) {text "Number of clusters:"; compound 'left'}
+		@cVal = Tk::Tile::Label.new(root) {compound 'left'}
 
 		content.grid :column => 0, :row => 0, :columnspan => 16, :rowspan => 12
 		menuBarFrame.grid :column => 0, :row => 0, :columnspan => 16, :rowspan => 1 
-		mainContentFrame.grid :column => 0, :row => 1, :columnspan => 12, :rowspan => 9 
-		sideBarFrame.grid :column => 14, :row => 0, :columnspan => 2, :rowspan => 9 
+		mainContentFrame.grid :column => 0, :row => 1, :columnspan => 12, :rowspan => 9
+		sideBarFrame.grid :column => 14, :row => 0, :columnspan => 2, :rowspan => 6 
 		controlBarFrame.grid :column => 0, :row => 10, :columnspan => 16, :rowspan => 2
 
-		runButton.grid :column => 14, :row => 0
-		cancelButton.grid :column => 15, :row => 0
+		heading.grid :column => 0, :row => 0
 
-		@kVal.grid :column => 15, :row => 1
-		@cVal.grid :column => 15, :row => 2
+		kText.grid :column => 14, :row => 0, :columnspan => 2 # keyword selector
+		@keywordMenu.grid :column => 14, :row => 1, :columnspan => 2 # keyword drop down menu
+		cText.grid :column => 14, :row => 2, :columnspan => 2 # cluster number selector
+		@clusterMenu.grid :column => 14, :row => 3, :columnspan => 2 # cluster drop down menu
+		uText.grid :column => 14, :row => 4, :columnspan => 2 # user number selector
+		@userMenu.grid :column => 14, :row => 5, :columnspan => 2 # cluster drop down menu
 
-		curK.grid :column => 14, :row => 1
-		curC.grid :column => 14, :row => 2
+		doScrape.grid :column => 14, :row => 6, :columnspan => 2 # rescrape checkbutton
+		runButton.grid :column => 14, :row => 7, :columnspan => 2 # run button
+		cancelButton.grid :column => 14, :row => 8, :columnspan => 2 # clear button
 
-		kText.grid :column => 14, :row => 0, :columnspan => 2
-		cText.grid :column => 14, :row => 2, :columnspan => 2
+		curK.grid :column => 1, :row => 10 # current keyword label
+		curC.grid :column => 1, :row => 11 # current cluster number label
 
-		@keywordMenu.grid :column => 14, :row => 1, :columnspan => 2
-		@clusterMenu.grid :column => 14, :row => 3, :columnspan => 2
+		@kVal.grid :column => 2, :row => 10, :columnspan => 3 # current keyword val
+		@cVal.grid :column => 2, :row => 11, :columnspan => 3 # current cluster val
 
-		@label.grid :column => 0, :row => 1, :columnspan => 12, :rowspan => 9
-		logoLabel.place('height' => 50, 'width' => 50, 'x' => 0, 'y' => 0)
+		@label.grid :column => 0, :row => 1, :columnspan => 12, :rowspan => 9 # main image
+		logoLabel.grid :column => 14, :row => 11, :columnspan => 2, :rowspan => 2 # logo
 
 
 		Tk.mainloop
