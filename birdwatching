@@ -1,0 +1,3 @@
+#!/bin/sh
+
+ruby feathers/gui_main.rb
