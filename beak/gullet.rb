@@ -98,10 +98,10 @@ class Gullet
       #return 1 # something went wrong
     #end
 
-    puts data
+    #puts data
     labeled_data = kcl.get_clusters(data, k, false)
     #puts "The entire labeled data set...\n"
-    puts labeled_data
+    #puts labeled_data
 
     flat_labeled_data = Array.new()
     labeled_data.each { |point_hash|
@@ -116,8 +116,8 @@ class Gullet
     # print pca.explained_variance_ratio
     # print reduced_data
 
-    features_file = File.open("z_scored_features.txt", "w")
-    labels_file = File.open("z_scored_labels.txt", "w")
+    features_file = File.open("beak/z_scored_features.txt", "w")
+    labels_file = File.open("beak/z_scored_labels.txt", "w")
 
     labeled_data.each { |point_hash|
       point_hash.values.slice(1...(point_hash.size - 1)).each { |value|

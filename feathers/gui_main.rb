@@ -39,7 +39,7 @@ class GUIMain
 
 	def makeGIF
 		tempImage = ImageList.new("feathers/graph_temp/graph_temp.png")
-		tempResize = tempImage.resize_to_fit(600,450)
+		tempResize = tempImage.scale(600,450)
 		tempResize.write("feathers/graph_temp/graph_temp.gif")
 	end
 
