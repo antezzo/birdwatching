@@ -9,8 +9,8 @@ require_relative 'twitter_scraper'
 class Gullet
 
   # updates average
-  def avg(avg, size, new)
-      return ((size * avg) + new)/(size + 1)
+  def avg(avg, size, new_)
+      return ((size * avg) + new_)/(size + 1)
   end
 
   # checks if word is a swear
@@ -44,7 +44,7 @@ class Gullet
     kcl = KClusters.new
     data = Array.new
 
-    begin
+    #begin
       file = File.open("beak/users_data.txt", "r")
 
       while !file.eof?
@@ -55,14 +55,17 @@ class Gullet
       	tweets = File.open("beak/tweets/" + arr[0] + "_tweets.txt")
         all_tweets = tweets.read.split("__END_TWEET__")
 
-	all_tweets.each do |tweet|
+        count_avg = 0;
+
+	       all_tweets.each do |tweet|
       	    tarr = tweet.split(' ') # This breaks on new lines in tweets
 
       	    tweet_num += 1
       	    word_num = tarr.count
-            word_num = 10
+            if (tarr.count == 0)
+              word_num = 1
+            end
 
-            # THIS IS BROKEN
       	    count_avg = avg(count_avg, tweet_num, word_num) # something is wrong here...
 
             swear_num = 0
@@ -72,7 +75,7 @@ class Gullet
           		end
       	    end
 
-      	    swear_avg = avg(swear_avg, tweet_num, swear_num/word_num)
+      	    swear_avg = avg(swear_avg, tweet_num, swear_num/word_num) # does this do what you think it does?
 
       	end
         tweets.close
@@ -83,21 +86,22 @@ class Gullet
       	    friends: arr[2].to_i,
       	    tweet_count: arr[3].to_i,
 	    fav_count: arr[4].to_i,
-      	    count_avg: count_avg,
-      	    swear_avg: swear_avg
+      	    #count_avg: count_avg,
+      	    #swear_avg: swear_avg
       	}
       	data.push(data_point)
       end
 
       file.close
-    rescue
-      return 1 # something went wrong
-    end
+    #rescue
+      #puts "Something went wrong..."
+      #return 1 # something went wrong
+    #end
 
-    #puts data
-    labeled_data = kcl.get_clusters(data, k)
+    puts data
+    labeled_data = kcl.get_clusters(data, k, false)
     #puts "The entire labeled data set...\n"
-    #puts labeled_data
+    puts labeled_data
 
     flat_labeled_data = Array.new()
     labeled_data.each { |point_hash|
