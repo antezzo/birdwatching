@@ -1,12 +1,14 @@
-require "rubygems"
-require "twitter"
-require "yaml"
+require 'rubygems'
+require 'twitter'
+require 'yaml'
+
+
 
 class TwitterData
 	attr_reader :client
 
 	def initialize
-		keys = YAML.load_file('application.yml')
+		keys = YAML.load_file('beak/application.yml')
 
 		@client = Twitter::REST::Client.new do |config|
 			config.consumer_key        = keys['CONSUMER_KEY']
@@ -20,9 +22,9 @@ class TwitterData
 	# #username #followers #friends #tweet_count #fave_count
 	def write_userstats_tofile(keyword, n)
 	  #key = gets
-          cmd = "rm -f tweets/*.txt"
+          cmd = "rm -f beak/tweets/*.txt"
           Process.spawn(cmd) # will this run the rest of the function
-		file = "users_data.txt"
+		file = "beak/users_data.txt"
 		target = open(file, 'w')
 		get_users([keyword], n).each do |username_str|
 			target.write(get_user_stats(username_str))
@@ -68,7 +70,7 @@ class TwitterData
 	def get_tweets(username, count, target)
 		#target_dir = '/#{target}/*'
 		#FileUtils.rm_r Dir.glob('#{target_dir}')
-		filename = "#{target}/#{username}_tweets.txt"
+		filename = "beak/#{target}/#{username}_tweets.txt"
 		target = open(filename, 'w')
 		user_retweet_count = 0
 		client.user_timeline(username, { :count => count, :tweet_mode => 'extended'}).each do |tweet|
