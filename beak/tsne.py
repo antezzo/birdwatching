@@ -14,7 +14,7 @@
 
 import numpy as np
 import matplotlib.pyplot as pylab
-
+import matplotlib.gridspec as gridspec
 
 def Hbeta(D=np.array([]), beta=1.0):
     """
@@ -37,7 +37,7 @@ def x2p(X=np.array([]), tol=1e-5, perplexity=30.0):
     """
 
     # Initialize some variables
-    print("Computing pairwise distances...")
+    #print("Computing pairwise distances...")
     (n, d) = X.shape
     sum_X = np.sum(np.square(X), 1)
     D = np.add(np.add(-2 * np.dot(X, X.T), sum_X).T, sum_X)
@@ -49,8 +49,8 @@ def x2p(X=np.array([]), tol=1e-5, perplexity=30.0):
     for i in range(n):
 
         # Print progress
-        if i % 500 == 0:
-            print("Computing P-values for point %d of %d..." % (i, n))
+        #if i % 10 == 0:
+            #print("Computing P-values for point %d of %d..." % (i, n))
 
         # Compute the Gaussian kernel and entropy for the current precision
         betamin = -np.inf
@@ -86,7 +86,7 @@ def x2p(X=np.array([]), tol=1e-5, perplexity=30.0):
         P[i, np.concatenate((np.r_[0:i], np.r_[i+1:n]))] = thisP
 
     # Return final P-matrix
-    print("Mean value of sigma: %f" % np.mean(np.sqrt(1 / beta)))
+    #print("Mean value of sigma: %f" % np.mean(np.sqrt(1 / beta)))
     return P
 
 
@@ -96,7 +96,7 @@ def pca(X=np.array([]), no_dims=50):
         no_dims dimensions.
     """
 
-    print("Preprocessing the data using PCA...")
+    #print("Preprocessing the data using PCA...")
     (n, d) = X.shape
     X = X - np.tile(np.mean(X, 0), (n, 1))
     (l, M) = np.linalg.eig(np.dot(X.T, X))
@@ -187,23 +187,33 @@ if __name__ == "__main__":
     Y = tsne(X, 2, 3, 5.0)
 
     fig = pylab.figure()
-
-    feature_names = ["followers", "friends", "tweet count", "word avg"]
+    #spec = gridspec.GrigSpec(ncols=)
+    feature_names = ["followers", "friends", "tweet_count", "fav_count"]
 
     k = 1
     for i in range(0, X.shape[1]):
         j = 1
         while (i + j < X.shape[1]):
-            graph = fig.add_subplot(3, X.shape[1], k)
+            graph = fig.add_subplot(4, 3, k)
             graph.set_title("{0} vs {1}".format(feature_names[i], feature_names[i+j]))
             graph.scatter(X[...,i], X[...,i+j], 20, labels)
+            graph.tick_params(axis='both',
+                which='both',
+                bottom=False,
+                top=False,
+                left=False,
+                labelbottom=False,
+                labelleft=False)
             j += 1
             k += 1
 
-    final = fig.add_subplot(2, 2, 3)
+    final = fig.add_subplot(2, 1, 2)
+    #final = fig.add_subplot(1, 1, 1)
     final.scatter(Y[:, 0], Y[:, 1], 20, labels)
     #pylab.scatter(Y[:, 0], Y[:, 1], 20, labels)
     final.set_title("reduced dimensionality")
+    final.set_yticklabels([])
+    final.set_xticklabels([])
     pylab.show()
     pylab.savefig("feathers/graph_temp/graph_temp.png")
     print("DING DONG! All done")
