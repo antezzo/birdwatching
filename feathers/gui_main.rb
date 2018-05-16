@@ -1,34 +1,46 @@
 require 'tk'
 require 'tkextlib/tile'
 require 'RMagick'
+require_relative '../beak/gullet.rb'
 include Magick
 
 class GUIMain
-	def loadImage(runClusters,clusterNum,userNum)
+	def makeImage(runClusters,clusterNum,userNum,doScrape)
 		$keyVar = TkVariable.new
-		$clusterNo = TkVariable.new
-		$userNo = TkVariable.new
 		$keyVar = @keywordMenu.get
-		$clusterNo = clusterNum
-		$userNo = userNum
-		if ($keyVar == "c1") then
-				@image = TkPhotoImage.new(:file => "graph_temp/graph_temp1.gif")
-		elsif ($keyVar == "c2") then
-			@image = TkPhotoImage.new(:file => "graph_temp/graph_temp2.gif")
-		elsif ($keyVar == "c3") then
-			@image = TkPhotoImage.new(:file => "graph_temp/graph_temp3.gif")
+		$sVar = false
+
+		if doScrape == 0 then
+			$sVar = false
 		else
-			@image = TkPhotoImage.new(:file => "graph_temp/graph_temp4.gif")
+			$sVar = true
 		end
+
+		gullet = Gullet.new()
+		print gullet.process_data($keyVar, clusterNum, userNum, $sVar)
+
+		cmd = "python beak/tsne.py"
+		pid = Process.spawn(cmd)
+		Process.wait(pid)
+
+		makeGIF
+		outImage = TkPhotoImage.new(:file => "feathers/graph_temp/graph_temp.gif")
+		
 		@kVal.text = $keyVar.to_s
 		@cVal.text = $clusterNo.to_s
-		@label.image = @image
+		@label.image = outImage
 	end
 
 	def clearImage
 		@label.image = @defaultImage
 		@kVal.text = nil
 		@cVal.text = nil
+	end
+
+	def makeGIF
+		tempImage = ImageList.new("feathers/graph_temp/graph_temp.png")
+		tempResize = tempImage.resize_to_fit(600,450)
+		tempResize.write("feathers/graph_temp/graph_temp.gif")
 	end
 
 	def initialize
@@ -41,19 +53,19 @@ class GUIMain
 
 		content = Tk::Tile::Frame.new(root) {width 850; height 600} # content container
 		menuBarFrame = Tk::Tile::Frame.new(content) {width 850; height 50} # menu bar container
-		mainContentFrame = Tk::Tile::Frame.new(content) {width 600; height 450} # main content container
+		mainContentFrame = Tk::Tile::Frame.new(content) {width 640; height 480} # main content container
 		controlBarFrame = Tk::Tile::Frame.new(content) {width 850; height 100} # 
 		sideBarFrame = Tk::Tile::Frame.new(content) {width 200; height 450}
 
 		heading = Tk::Tile::Label.new(content) {text "Birdwatching GUI"; font 'TkMenuFont'}
 
 		runButton = Tk::Tile::Button.new(sideBarFrame) {text "Run"}
-		runButton.command{ loadImage($scrapeVar,$clusterVar,$userVar) }
+		runButton.command{ makeImage($scrapeVar,$clusterVar,$userVar,$scrapeVar) }
 		cancelButton = Tk::Tile::Button.new(sideBarFrame) {text "Clear"}
 		cancelButton.command{ clearImage }
 
-		$scrapeVar = TkVariable.new( 1 )
-		doScrape = Tk::Tile::CheckButton.new(sideBarFrame) {text "Scrape new data?"; variable $scrapeVar; onvalue 1; offvalue 0}
+		$scrapeVar = TkVariable.new( true )
+		doScrape = Tk::Tile::CheckButton.new(sideBarFrame) {text "Scrape new data?"; variable $scrapeVar; onvalue true; offvalue false}
 
 		kText = TkLabel.new(sideBarFrame) {text "Keyword:"; justify 'left'}
 		cText = TkLabel.new(sideBarFrame) {text "Number of clusters:"; justify 'left'}
@@ -65,13 +77,12 @@ class GUIMain
 		@clusterMenu = Tk::Tile::Spinbox.new(sideBarFrame) {from 2; to 20; textvariable $clusterVar}
 		@userMenu = Tk::Tile::Spinbox.new(sideBarFrame) {from 5; to 200; textvariable $userVar}
 		
-
 		@label = Tk::Tile::Label.new(root)
-		@defaultImage = TkPhotoImage.new(:file => "graph_temp/default.gif")
+		@defaultImage = TkPhotoImage.new(:file => "feathers/graph_temp/default.gif")
 		@label.image = @defaultImage
 
 		logoLabel = Tk::Tile::Label.new(root)
-		logo = TkPhotoImage.new(:file => "logo.gif")
+		logo = TkPhotoImage.new(:file => "feathers/logo.gif")
 		logoLabel.image = logo
 
 		curK = Tk::Tile::Label.new(root) {text "Current keyword:"; compound 'left'}

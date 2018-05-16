@@ -182,8 +182,8 @@ def tsne(X=np.array([]), no_dims=2, initial_dims=50, perplexity=30.0):
 
 if __name__ == "__main__":
     print("Running t-sne on tweeted data...")
-    X = np.loadtxt("z_scored_features.txt")
-    labels = np.loadtxt("z_scored_labels.txt")
+    X = np.loadtxt("beak/z_scored_features.txt")
+    labels = np.loadtxt("beak/z_scored_labels.txt")
     Y = tsne(X, 2, 3, 5.0)
 
     fig = pylab.figure()
@@ -205,5 +205,5 @@ if __name__ == "__main__":
     #pylab.scatter(Y[:, 0], Y[:, 1], 20, labels)
     final.set_title("reduced dimensionality")
     pylab.show()
-    pylab.savefig("../feathers/graph_temp/graph_temp.png")
+    pylab.savefig("feathers/graph_temp/graph_temp.png")
     print("DING DONG! All done")

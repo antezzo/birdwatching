@@ -45,14 +45,14 @@ class Gullet
     data = Array.new
 
     begin
-      file = File.open("users_data.txt", "r")
+      file = File.open("beak/users_data.txt", "r")
 
       while !file.eof?
       	line = file.readline
       	next if line.strip.empty? == true
       	arr = line.split(' ')
 
-      	tweets = File.open("tweets/" + arr[0] + "_tweets.txt")
+      	tweets = File.open("beak/tweets/" + arr[0] + "_tweets.txt")
         all_tweets = tweets.read.split("__END_TWEET__")
 
         count_avg = 0;
@@ -98,10 +98,10 @@ class Gullet
       return 1 # something went wrong
     end
 
-    puts data
-    labeled_data = kcl.get_clusters(data, k, true)
-    puts "The entire labeled data set...\n"
-    puts labeled_data
+    #puts data
+    labeled_data = kcl.get_clusters(data, k, false)
+    #puts "The entire labeled data set...\n"
+    #puts labeled_data
 
     flat_labeled_data = Array.new()
     labeled_data.each { |point_hash|
@@ -139,5 +139,5 @@ class Gullet
   end
 end
 
-gullet = Gullet.new()
-gullet.process_data("cheese", 4, 50, false)
+#gullet = Gullet.new()
+#gullet.process_data("cheese", 4, 10, true)
