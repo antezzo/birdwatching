@@ -1,8 +1,8 @@
 require 'tk'
 require 'tkextlib/tile'
 require 'RMagick'
-require_relative '../beak/gullet.rb'
 include Magick
+require_relative '../beak/gullet.rb'
 
 class GUIMain
 	def makeImage(runClusters,clusterNum,userNum,doScrape)
@@ -27,7 +27,7 @@ class GUIMain
 		outImage = TkPhotoImage.new(:file => "feathers/graph_temp/graph_temp.gif")
 		
 		@kVal.text = $keyVar.to_s
-		@cVal.text = $clusterNo.to_s
+		@cVal.text = clusterNum.to_s
 		@label.image = outImage
 	end
 
@@ -53,7 +53,7 @@ class GUIMain
 
 		content = Tk::Tile::Frame.new(root) {width 850; height 600} # content container
 		menuBarFrame = Tk::Tile::Frame.new(content) {width 850; height 50} # menu bar container
-		mainContentFrame = Tk::Tile::Frame.new(content) {width 640; height 480} # main content container
+		mainContentFrame = Tk::Tile::Frame.new(content) {width 600; height 450} # main content container
 		controlBarFrame = Tk::Tile::Frame.new(content) {width 850; height 100} # 
 		sideBarFrame = Tk::Tile::Frame.new(content) {width 200; height 450}
 

@@ -204,6 +204,6 @@ if __name__ == "__main__":
     final.scatter(Y[:, 0], Y[:, 1], 20, labels)
     #pylab.scatter(Y[:, 0], Y[:, 1], 20, labels)
     final.set_title("reduced dimensionality")
-    pylab.show()
+    #pylab.show()
     pylab.savefig("feathers/graph_temp/graph_temp.png")
     print("DING DONG! All done")
