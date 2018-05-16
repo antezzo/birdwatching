@@ -23,59 +23,12 @@ class KClusters
       flat_data[i] = data[i].values.drop(1)
     end
 
-    z_scored_flat_data = calculate_and_convert_to_z_scores(flat_data, num_features)
-
-    features = Array.new(num_features) {Array.new} # an array of features
-
-    z_scored_flat_data.each { |feat_list|
-        for i in 0...num_features
-          features[i].push(feat_list[i])
-        end
-    }
-
-    # array of min and max pairs for a given feature (by index)
-    min_max = Array.new
-    for i in 0...num_features
-      min_max[i] = [features[i].min, features[i].max]
-    end
-
-    z_transposed = Array.new()
-    z_scored_flat_data.each { |feature_list|
-      point = Array.new()
-      j = 0
-      feature_list.each { |value|
-        point.push(value - (min_max[j][0])) # because the min will always be negative or 0
-        j += 1
-      }
-      z_transposed.push(point)
-    }
-
-    for m in 0...num_features # shifting min's and maxes to match transposition
-      min = min_max[m][0]
-      min_max[m][0] -= min # min will always be a negative value
-      min_max[m][1] -= min
-    end
+    min_max = Array.new()
 
     if (normalize == true)
-      z_normalized = Array.new()
-      z_transposed.each { |feature_list|
-        point = Array.new()
-        j = 0
-        feature_list.each { |value|
-          if (min_max[j][0] != min_max[j][1])
-            point.push((value - min_max[j][0]) / (min_max[j][1] - min_max[j][0]))
-          else
-            point.push(0.5) # ensure a normal distribution
-          end
-
-          j += 1
-        }
-        z_normalized.push(point)
-      }
-      z_data = z_normalized
-      puts "Normalized data..."
+      z_data, min_max = normalize(flat_data, num_features)
     else
-      z_data = z_transposed
+      z_data, min_max = calculate_and_convert_to_z_scores(flat_data, num_features)
     end
 
     #puts z_data
@@ -108,6 +61,39 @@ class KClusters
       data[i][:label] = labels[i]
     end
     return data
+  end
+
+  def normalize_data(data, num_features)
+    features = Array.new(num_features) {Array.new}
+
+    data.each { |feat_list|
+        for i in 0...num_features
+          features[i].push(feat_list[i])
+        end
+    }
+
+    # array of min and max pairs for a given feature (by index)
+    min_max = Array.new
+    for i in 0...num_features
+      min_max[i] = [features[i].min, features[i].max]
+    end
+
+    normalized_data = Array.new()
+    data.each { |feature_list|
+      point = Array.new()
+      j = 0
+      feature_list.each { |value|
+        if (min_max[j][0] != min_max[j][1])
+          point.push((value - min_max[j][0]) / (min_max[j][1] - min_max[j][0]))
+        else
+          point.push(0.5) # ensure a normal distribution
+        end
+
+        j += 1
+      }
+      normalized_data.push(point)
+    }
+    return normalized_data, min_max
   end
 
   def random_centroid(min_max)
@@ -203,7 +189,33 @@ class KClusters
       }
       z_data.push(z_point)
     }
-    return z_data
+
+      features = Array.new(num_features) {Array.new}
+
+    z_data.each { |feat_list|
+        for i in 0...num_features
+          features[i].push(feat_list[i])
+        end
+    }
+
+    # array of min and max pairs for a given feature (by index)
+    min_max = Array.new
+    for i in 0...num_features
+      min_max[i] = [features[i].min, features[i].max]
+    end
+
+    z_transposed = Array.new()
+    z_data.each { |feature_list|
+      point = Array.new()
+      j = 0
+      feature_list.each { |value|
+        point.push(value - (min_max[j][0])) # because the min will always be negative or 0
+        j += 1
+      }
+      z_transposed.push(point)
+    }
+
+    return z_transposed, min_max
   end
 
   # returns the standard deviation for each feature, as well as the mean
