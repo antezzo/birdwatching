@@ -50,7 +50,6 @@ class TwitterData
 		user = client.user(username)
 		if user.protected? != true
 			username  = user.screen_name.to_s
-			#real_name = user.name
 			followers	= user.followers_count.to_s
 			friends = user.friends_count.to_s
 			tweet_count = user.statuses_count.to_s
