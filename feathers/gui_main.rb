@@ -73,7 +73,7 @@ class GUIMain
 
 		$clusterVar = TkVariable.new(2)
 		$userVar = TkVariable.new(5)
-		@keywordMenu = Tk::Tile::Combobox.new(sideBarFrame) {values [ 'kim kardashian', 'c2', 'c3']; state 'normal'; justify 'center'}
+		@keywordMenu = Tk::Tile::Combobox.new(sideBarFrame) {values [ 'kim kardashian', 'trump','cheese','llama']; state 'normal'; justify 'center'}
 		@clusterMenu = Tk::Tile::Spinbox.new(sideBarFrame) {from 2; to 20; textvariable $clusterVar}
 		@userMenu = Tk::Tile::Spinbox.new(sideBarFrame) {from 5; to 200; textvariable $userVar}
 		
